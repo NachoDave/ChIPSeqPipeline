@@ -7,37 +7,209 @@ import datetime
 
 ''' Class to run docker container for unpaired bowtie2 ======================'''
 class runBowtie2Unpaired:
+    ''' Variables:
+    inDr - directory where fastq/fastq.gz files are stored
+    targetFn - list of target FileNames
+    genomePath - path to genomes
+    args - additonal user defined bowtie2 arguments
+    logDr - directory to write log Files
+    ctrlFn - list of control Filenames
+    targetFnOut - directory to write output Files
+    ctrlFnOut - list of output control file FileNames
+    '''
 
     '''Methods =============================================================='''
     ''' Constructor ---------------------------------------------------------'''
-    def __init__(self, tpDr, targetFn, args = [], logDr = None, ctrlFn = None, outDr =  None, targetFnOut = None, ctrlFnOut = None):
-        if outDr is None:
-            outDr = tpDr # if no output directory provided, use input directory
-        if outNm is None:
-            print('Sort out output name')
-        if ctrl is not None:
-            targets = targetFn + ctrlFn # combine target filenames and control
-            # file names
+    def __init__(self, inDr, targetFN, genomePth, genome, args = [], logDr = None, outDr =  None, ctrlFN = [],  targetFNOut = None, ctrlFNOut = None):
+        self.inDr = inDr
+        self.targetFN = targetFN
+        self.genomePth = genomePth
+        self.args = args
+        self.ctrlFN = ctrlFN
+        self.genome = genome
 
+        if outDr is None:
+            outDr = inDr # if no output directory provided, use input directory
+        if targetFNOut is None:
+            targetFNOut = [w.replace('.fastq', '_bowtie2.sam').replace('.gz', '') for w in targetFN]
+        if ctrlFNOut is None:
+            if ctrlFN:
+                ctrlFNOut = [w.replace('.fastq', '_bowtie2.sam').replace('.gz', '') for w in ctrlFN]
+            else:
+                ctrlFNOut = []
+        if logDr is None:
+            logDr = outDr
+
+        self.outDr = outDr
+        self.targetFNOut = targetFNOut
+        self.ctrlFNOut = ctrlFNOut
+        self.logDr = logDr
+
+        dt = str(datetime.datetime.now())
+        dt = dt[0:10]
+        dt = dt.replace('-', '')
+        self.dt = dt
         ''' try/catch to check all inputs ok --------------------------------'''
 
     ''' main function to run container --------------------------------------'''
-    def run():
+
+    def run(self):
+        print(self.targetFN + self.ctrlFN)
+        print(self.targetFNOut + self.ctrlFNOut)
+        print('\n')
+
+        with open(self.logDr + '/' + 'Align' + self.dt + '.err', 'w+') as lgf:
+
+            lgf.write('Align stderr ' + str(datetime.datetime.now()) + '\n') # open log file for writing
+            for fqFN, fqFNOut in zip(self.targetFN + self.ctrlFN, self.targetFNOut + self.ctrlFNOut): # loop trhough files
+
+                inPth = self.inDr + '/' + fqFN
+                outPth = self.outDr + '/' + fqFNOut
+                print('\n')
+                print('Locating file:', inPth, '\n')
+                print('Output path', outPth, '\n')
+                print('\n')
+
+                if os.path.exists(inPth):
+                    print(inPth, 'exists, attempting alignment')
+
+                    ''' Input to bowtie2 -----------------------------------'''
+                    bwt2ParLst = ['docker', 'run','--rm','-v', self.genomePth + ':/data/genomes/',
+                            '-v', self.inDr + ':/data/inputFiles',
+                            '-v', self.outDr + ':/data/outputFiles',
+                            'biocontainers/bowtie2:v2.2.9_cv2',
+                            'bowtie2', '-q',
+                            '-x', self.genomePth + self.genome,
+                            '-U', '/data/inputFiles/' + fqFN,
+                            '-S', '/data/outputFiles/' + fqFNOut
+                    ]
+
+                    #if bwt2ArgsN: # if there are command line args add these in
+                    #    bwt2ParLst[len(bwt2ParLst):len(bwt2ParLst) + bwt2ArgsN] = inPars['bowtie2Args']
+                        #print(bwt2ParLst)
+                    p = subprocess.Popen(bwt2ParLst,
+                    shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE) # run process
+
+                    output, err = p.communicate()
+                    print('out:' + output)
+                    print('err:' + err)
+
+                    lgf.write('\nFile to align: ' +   inPth + '\nGenome:'
+                    + self.genomePth + self.genome + '\nOutput File:' + outPth + '\n')
+
+                    if self.args:
+                        lgf.write('Cmd line Args: ' + self.args + '\n\n')
+                    else:
+                        lgf.write('No additional command line args\n\n')
+                    lgf.write(err)
+
+                else:
+                    print('Could not find file', inPth, 'skipping alignment')
+
+        lgf.close()
 
 
-
-
-
-
-
-
-
-''' Class to run docker container for paired bowtie2 ========================'''
+''' Class to run docker container for Paired bowtie2 ========================'''
 class runBowtie2Paired:
+    ''' Variables:
+    inDr - directory where fastq/fastq.gz files are stored
+    targetFn - list of target FileNames
+    genomePath - path to genomes
+    args - additonal user defined bowtie2 arguments
+    logDr - directory to write log Files
+    ctrlFn - list of control Filenames
+    targetFnOut - directory to write output Files
+    ctrlFnOut - list of output control file FileNames
+    '''
 
-''' Constructor ============================================================='''
-    def __init__(self, tpDr, targetFn1, targetFn2, ctrlFn, outDir =  None, outNm = None):
-        if outDir is None:
-            outDir = tpDr
-        if outNm is None:
-            print('Sort out output name')#
+    '''Methods =============================================================='''
+    ''' Constructor ---------------------------------------------------------'''
+    def __init__(self, inDr, targetFN1, targetFN2, genomePth, genome, args = [], logDr = None, outDr =  None, ctrlFN1 = [], ctrlFN2 = [],  targetFNOut = None, ctrlFNOut = None):
+        self.inDr = inDr
+        self.targetFN1 = targetFN1
+        self.targetFN2 = targetFN2
+        self.genomePth = genomePth
+        self.args = args
+        self.ctrlFN1 = ctrlFN1
+        self.ctrlFN2 = ctrlFN2
+        self.genome = genome
+
+        if outDr is None:
+            outDr = inDr # if no output directory provided, use input directory
+        if targetFNOut is None:
+            targetFNOut = [w.replace('.fastq', '_bowtie2.sam').replace('.gz', '') for w in targetFN1]
+        if ctrlFNOut is None:
+            if ctrlFN:
+                ctrlFNOut = [w.replace('.fastq', '_bowtie2.sam').replace('.gz', '') for w in ctrlFN1]
+            else:
+                ctrlFNOut = []
+        if logDr is None:
+            logDr = outDr
+
+        self.outDr = outDr
+        self.targetFNOut = targetFNOut
+        self.ctrlFNOut = ctrlFNOut
+        self.logDr = logDr
+
+        dt = str(datetime.datetime.now())
+        dt = dt[0:10]
+        dt = dt.replace('-', '')
+        self.dt = dt
+        ''' try/catch to check all inputs ok --------------------------------'''
+
+    ''' main function to run container --------------------------------------'''
+
+    def run(self):
+        print(self.targetFN1 + self.ctrlFN)
+        print(self.targetFNOut + self.ctrlFNOut)
+        print('\n')
+
+        with open(self.logDr + '/' + 'Align' + self.dt + '.err', 'w+') as lgf:
+
+            lgf.write('Align stderr ' + str(datetime.datetime.now()) + '\n') # open log file for writing
+            for fqFN, fqFNOut in zip(self.targetFN1 + self.ctrlFN1, self.targetFNOut + self.ctrlFNOut): # loop trhough files
+
+                inPth = self.inDr + '/' + fqFN
+                outPth = self.outDr + '/' + fqFNOut
+                print('\n')
+                print('Locating file:', inPth, '\n')
+                print('Output path', outPth, '\n')
+                print('\n')
+
+                if os.path.exists(inPth):
+                    print(inPth, 'exists, attempting alignment')
+
+                    ''' Input to bowtie2 -----------------------------------'''
+                    bwt2ParLst = ['docker', 'run','--rm','-v', self.genomePth + ':/data/genomes/',
+                            '-v', self.inDr + ':/data/inputFiles',
+                            '-v', self.outDr + ':/data/outputFiles',
+                            'biocontainers/bowtie2:v2.2.9_cv2',
+                            'bowtie2', '-q',
+                            '-x', self.genomePth + self.genome,
+                            '-U', '/data/inputFiles/' + fqFN,
+                            '-S', '/data/outputFiles/' + fqFNOut
+                    ]
+
+                    #if bwt2ArgsN: # if there are command line args add these in
+                    #    bwt2ParLst[len(bwt2ParLst):len(bwt2ParLst) + bwt2ArgsN] = inPars['bowtie2Args']
+                        #print(bwt2ParLst)
+                    p = subprocess.Popen(bwt2ParLst,
+                    shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE) # run process
+
+                    output, err = p.communicate()
+                    print('out:' + output)
+                    print('err:' + err)
+
+                    lgf.write('\nFile to align: ' +   inPth + '\nGenome:'
+                    + self.genomePth + self.genome + '\nOutput File:' + outPth + '\n')
+
+                    if self.args:
+                        lgf.write('Cmd line Args: ' + self.args + '\n\n')
+                    else:
+                        lgf.write('No additional command line args\n\n')
+                    lgf.write(err)
+
+                else:
+                    print('Could not find file', inPth, 'skipping alignment')
+
+        lgf.close()
