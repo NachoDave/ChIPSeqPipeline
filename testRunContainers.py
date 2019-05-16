@@ -18,13 +18,13 @@ args = ["-p4", "-t"]
 logDr = resDr + '/logs'
 
 
-b = cont.runBowtie2Unpaired(inDr, tarFN, genPth, genome, ctrlFN = ctrlFN, outDr = resDr, args = args, logDr = logDr)
+#b = cont.runBowtie2Unpaired(inDr, tarFN, genPth, genome, ctrlFN = ctrlFN, outDr = resDr, args = args, logDr = logDr)
 #print(b.inDr,  b.targetFN,  b.genomePth,  b.targetFNOut, b.ctrlFN, b.outDr, b.logDr)
 #print(b.targetFN)
 #print('\n')
 #print(b.ctrlFN)
 #print('\n')
-b.run()
+#b.run()
 '''
 c = cont.runBowtie2Paired(inDr, tarFN, tarFN2, genPth, genome, ctrlFN1 = ctrlFN, ctrlFN2 = ctrlFN2,outDr = resDr, args = args)
 print(c.inDr,  c.targetFN1,  c.targetFN2,c.genomePth,  c.targetFNOut, c.ctrlFN1, c.ctrlFN2,c.outDr, c.logDr)
@@ -35,3 +35,10 @@ print(c.ctrlFN1)
 print('\n')
 c.run()
 '''
+
+''' Test Samtools ==========================================================='''
+
+tarFN = ['SRR6730206_shrt_RndSamp_bowtie2.sam', 'SRR6730206_shrt_RndSampCopy_bowtie2.sam']
+ctrlFN = ['SRR6730208_1000bpRnd_bowtie2.sam']
+d = cont.runSamtools(resDr, tarFN, ctrlFN = ctrlFN)
+d.run()

@@ -31,10 +31,10 @@ class runBowtie2Unpaired:
         if outDr is None:
             outDr = inDr # if no output directory provided, use input directory
         if targetFNOut is None:
-            targetFNOut = [w.replace('.fastq', '_bowtie2.sam').replace('.gz', '') for w in targetFN]
+            targetFNOut = [w.replace('.fastq', '_bowtie2UP.sam').replace('.gz', '') for w in targetFN]
         if ctrlFNOut is None:
             if ctrlFN:
-                ctrlFNOut = [w.replace('.fastq', '_bowtie2.sam').replace('.gz', '') for w in ctrlFN]
+                ctrlFNOut = [w.replace('.fastq', '_bowtie2UP.sam').replace('.gz', '') for w in ctrlFN]
             else:
                 ctrlFNOut = []
         if logDr is None:
@@ -137,10 +137,10 @@ class runBowtie2Paired:
         if outDr is None:
             outDr = inDr # if no output directory provided, use input directory
         if targetFNOut is None:
-            targetFNOut = [w.replace('.fastq', '_bowtie2.sam').replace('.gz', '') for w in targetFN1]
+            targetFNOut = [w.replace('.fastq', '_bowtie2P.sam').replace('.gz', '') for w in targetFN1]
         if ctrlFNOut is None:
             if ctrlFN1:
-                ctrlFNOut = [w.replace('.fastq', '_bowtie2.sam').replace('.gz', '') for w in ctrlFN1]
+                ctrlFNOut = [w.replace('.fastq', '_bowtie2P.sam').replace('.gz', '') for w in ctrlFN1]
             else:
                 ctrlFNOut = []
         if logDr is None:
@@ -217,6 +217,55 @@ class runBowtie2Paired:
                     print('Could not find file', inPth, 'skipping alignment')
 
         lgf.close()
+
+"""=========================================================================="""
+''' Class to run docker container for bedtools =============================='''
+
+class runSamtools:
+
+    def __init__(self, inDr, targetFN, logDr = None, ctrlFN = [],  targetFNOut = None, ctrlFNOut = None):
+        # Write BAM files to the same directory as the SAM files
+        self.inDr = inDr
+        self.targetFN = targetFN
+        self.ctrlFN = ctrlFN
+        if logDr is None:
+            logDr = inDr
+        if targetFNOut is None:
+            targetFNOut = [w.replace('.sam', '.bam') for w in targetFN]
+        if ctrlFNOut is None:
+            ctrlFNOut = [w.replace('.sam', '.bam') for w in ctrlFN]
+
+        self.targetFNOut = targetFNOut
+        self.ctrlFNOut = ctrlFNOut
+        self.logDr = logDr
+        dt = str(datetime.datetime.now())
+        dt = dt[0:10]
+        dt = dt.replace('-', '')
+        self.dt = dt
+
+
+    ''' Method to convert sam files to bam files '''
+    def sam2Bam(self):
+        print(self.targetFNOut)
+        print('\n')
+        print(self.ctrlFNOut)
+        samViewErr = open(self.logDr + '/samView' + self.dt + '.err', 'w+')
+        samViewErr.write('Error log for samtools view ' + self.dt)
+
+        for inNm, outNm in zip(self.targetFN + self.ctrlFN, self.targetFNOut + self.ctrlFNOut):
+            print(inNm, outNm)
+            print('\n')
+
+        samViewErr.close()
+    ''' Method to create BAM index '''
+    #def indexBam(self):
+
+    ''' Method to sort BAM files '''
+    #def sortBam(self):
+
+    ''' Run all 3 methods to convert, index and sort SAM '''
+    def run(self):
+        self.sam2Bam()
 
 """=========================================================================="""
 ''' Class to run docker container for MACS =================================='''
