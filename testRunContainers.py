@@ -42,5 +42,7 @@ c.run()
 
 tarFN = ['SRR6730206_shrt_RndSamp_bowtie2.sam', 'SRR6730206_shrt_RndSampCopy_bowtie2.sam']
 ctrlFN = ['SRR6730208_1000bpRnd_bowtie2.sam']
-d = samt.runSamtools(resDr, tarFN, ctrlFN = ctrlFN, logDr = logDr)
-d.run()
+d = samt.runSamtools(resDr, tarFN, ctrlFN = ctrlFN, logDr = logDr, bamFiles = ['SRR6730206_shrt_RndSamp_bowtie2.bam', 'SRR6730206_shrt_RndSampCopy_bowtie2.bam', 'SRR6730208_1000bpRnd_bowtie2.bam'])
+#d.run()
+#d.sortBam()
+d.indexBam()
