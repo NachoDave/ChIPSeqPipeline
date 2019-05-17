@@ -106,13 +106,34 @@ class runSamtools:
         samSortErr.close()
 
     ''' Method to create BAM index '''
-    #def indexBam(self):
+    def indexBam(self):
+
+        if self.idxBamFiles is None:
+            self.idxBamFiles = [w.replace('.sam', '.sorted.bam') for w in self.targetFN + self.ctrlFN]
+
+        samIdxErr = open(self.logDr + '/samIndex' + self.dt + '.err', 'w+')
+        samIdxErr.write('Error log for samtools Index ' + self.dt)
+
+        for inNm in self.idxBamFiles:
+            print("Sorted bam file name: ", inNm)
+            print('\n')
+            # run samtools index to convert .sam to .bam---------------------------#
+            samToolsIndexPar = ['docker', 'run', '--rm', '-v',
+                self.inDr + ':/data/input/',
+                'biocontainers/samtools:v1.7.0_cv3',
+                'samtools', 'index',
+                '/data/input/' + inNm
+                ]
+
+            p = subprocess.Popen(samToolsIndexPar,
+            shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE) # run process
+
+            output, err = p.communicate()
+            samIdxErr.write('\n' + inNm)
+            samIdxErr.write(err + '\n')
 
 
-
-        #for inN
-
-
+        samIdxErr.close()
 
 
 
