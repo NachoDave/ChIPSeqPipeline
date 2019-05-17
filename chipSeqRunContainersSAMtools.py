@@ -43,6 +43,27 @@ class runSamtools:
             print(self.inDr, inNm, outNm)
             print('\n')
 
+            # run samtools view to convert .sam to .bam----------------------------#
+
+            samToolsViewPar = ['docker', 'run', '--rm', '-v',
+                    self.inDr + ':/data/input/',
+                    'biocontainers/samtools:v1.7.0_cv3',
+                    'samtools', 'view', '-S', '-b',
+                    '/data/input/' + inNm
+                    ]
+
+            #print(samToolsViewPar)
+            p = subprocess.Popen(samToolsViewPar,
+            shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE) # run process
+
+            output, err = p.communicate()
+            samViewErr.write('\n' + inNm)
+            samViewErr.write(err + '\n')
+
+            with open(self.inDr + '/' + outNm, 'w+b') as f:
+                f.write(output)
+            f.close
+
         samViewErr.close()
     ''' Method to create BAM index '''
     #def indexBam(self):

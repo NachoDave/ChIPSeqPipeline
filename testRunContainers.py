@@ -2,7 +2,9 @@
 # ChIP seq scripts
 
 #from chipSeqRunContainers import runBowtie2Paired as bwt2UP
-import chipSeqRunContainers as cont
+# import chipSeqRunContainers as cont
+import chipSeqRunContainersAligners as cont
+import chipSeqRunContainersSAMtools as samt
 """ ========================================================================="""
 """ Bowtie2 unpaired aligner ------------------------------------------------"""
 
@@ -40,5 +42,5 @@ c.run()
 
 tarFN = ['SRR6730206_shrt_RndSamp_bowtie2.sam', 'SRR6730206_shrt_RndSampCopy_bowtie2.sam']
 ctrlFN = ['SRR6730208_1000bpRnd_bowtie2.sam']
-d = cont.runSamtools(resDr, tarFN, ctrlFN = ctrlFN)
+d = samt.runSamtools(resDr, tarFN, ctrlFN = ctrlFN, logDr = logDr)
 d.run()
