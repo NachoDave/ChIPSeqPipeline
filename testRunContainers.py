@@ -5,6 +5,7 @@
 # import chipSeqRunContainers as cont
 import chipSeqRunContainersAligners as cont
 import chipSeqRunContainersSAMtools as samt
+import chipSeqRunContainersQC as qc
 """ ========================================================================="""
 """ Bowtie2 unpaired aligner ------------------------------------------------"""
 
@@ -40,9 +41,14 @@ c.run()
 
 ''' Test Samtools ==========================================================='''
 
-tarFN = ['SRR6730206_shrt_RndSamp_bowtie2.sam', 'SRR6730206_shrt_RndSampCopy_bowtie2.sam']
-ctrlFN = ['SRR6730208_1000bpRnd_bowtie2.sam']
-d = samt.runSamtools(resDr, tarFN, ctrlFN = ctrlFN, logDr = logDr, bamFiles = ['SRR6730206_shrt_RndSamp_bowtie2.bam', 'SRR6730206_shrt_RndSampCopy_bowtie2.bam', 'SRR6730208_1000bpRnd_bowtie2.bam'])
+#tarFN = ['SRR6730206_shrt_RndSamp_bowtie2.sam', 'SRR6730206_shrt_RndSampCopy_bowtie2.sam']
+#ctrlFN = ['SRR6730208_1000bpRnd_bowtie2.sam']
+#d = samt.runSamtools(resDr, tarFN, ctrlFN = ctrlFN, logDr = logDr, bamFiles = ['SRR6730206_shrt_RndSamp_bowtie2.bam', 'SRR6730206_shrt_RndSampCopy_bowtie2.bam', 'SRR6730208_1000bpRnd_bowtie2.bam'])
 #d.run()
 #d.sortBam()
-d.indexBam()
+#d.indexBam()
+
+
+''' Test FastQC ============================================================ '''
+e = qc.runFastQC(inDr, tarFN + ctrlFN)
+e.run()

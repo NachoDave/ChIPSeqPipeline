@@ -141,3 +141,5 @@ class runSamtools:
     ''' Run all 3 methods to convert, index and sort SAM '''
     def run(self):
         self.sam2Bam()
+        self.sortBam()
+        self.indexBam()
