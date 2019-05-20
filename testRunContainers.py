@@ -6,6 +6,7 @@
 import chipSeqRunContainersAligners as cont
 import chipSeqRunContainersSAMtools as samt
 import chipSeqRunContainersQC as qc
+import chipSeqRunContainersPeakCalls as pc
 """ ========================================================================="""
 """ Bowtie2 unpaired aligner ------------------------------------------------"""
 
@@ -50,5 +51,26 @@ c.run()
 
 
 ''' Test FastQC ============================================================ '''
-e = qc.runFastQC(inDr, tarFN + ctrlFN)
-e.run()
+#e = qc.runFastQC(inDr, tarFN + ctrlFN)
+#e.run()
+
+''' Test MACS ============================================================== '''
+inDr = '/data/ChIPSeqAnalysis/Experiments/e/results/alignments/'
+outDr = '/data/ChIPSeqAnalysis/Experiments/e/results/peakCalls/'
+tarFN = ['SRR6730206_shrt_RndSamp_trim_bowtie2.bam',
+'SRR6730206_shrt_RndSampCopy_trim_bowtie2.bam',
+]
+
+#f = pc.runMACS(inDr, tarFN, ctrlFN = ctrlFN, outDr = outDr)
+#f.run()
+
+''' Test remove blacklist bedtools =========================================
+'''
+#tarFN = ['SRR6730206_shrt_RndSamp_trim_bowtie2.sorted.bam',
+#'SRR6730206_shrt_RndSampCopy_trim_bowtie2.sorted.bam',
+#]
+
+inDr = '/data/DaveJames/ChIPSeqAnalysis/Experiments/CurryExample/results/'
+tarFN = ['SRR6730206.sorted.bam']
+g = qc.runBedToolsRmBL(inDr, tarFN, '/data/ChIPSeqAnalysis/DAC_BlackList/','hg38.blacklist.bed')
+g.run()
