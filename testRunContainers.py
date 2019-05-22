@@ -7,6 +7,7 @@ import chipSeqRunContainersAligners as cont
 import chipSeqRunContainersSAMtools as samt
 import chipSeqRunContainersQC as qc
 import chipSeqRunContainersPeakCalls as pc
+import chipSeqRunGeneFinder as gf
 """ ========================================================================="""
 """ Bowtie2 unpaired aligner ------------------------------------------------"""
 
@@ -70,7 +71,28 @@ tarFN = ['SRR6730206_shrt_RndSamp_trim_bowtie2.bam',
 #'SRR6730206_shrt_RndSampCopy_trim_bowtie2.sorted.bam',
 #]
 
+#inDr = '/data/DaveJames/ChIPSeqAnalysis/Experiments/CurryExample/results/'
+#tarFN = ['SRR6730206.sorted.bam']
+#g = qc.runBedToolsRmBL(inDr, tarFN, '/data/ChIPSeqAnalysis/DAC_BlackList/','hg38.blacklist.bed')
+#g.run()
+
+''' Test Gene list ========================================================= '''
 inDr = '/data/DaveJames/ChIPSeqAnalysis/Experiments/CurryExample/results/'
-tarFN = ['SRR6730206.sorted.bam']
-g = qc.runBedToolsRmBL(inDr, tarFN, '/data/ChIPSeqAnalysis/DAC_BlackList/','hg38.blacklist.bed')
-g.run()
+targetFN = ['SRR6730206_SRR6730208ctrl_PstdMACS14_peaks.xls', 'SRR6730206_SRR6730208ctrl_PstdMACS14_Copy_peaks.xls']
+logDr = '/data/DaveJames/ChIPSeqAnalysis/Experiments/CurryExample/results/RTestResults/'
+outDr = '/data/DaveJames/ChIPSeqAnalysis/Experiments/CurryExample/results/'
+
+#h = gf.runGeneFinderR(inDr, targetFN, logDr = logDr,
+#outDr = outDr, geneLstNm = 'GeneCoordinates_ENSEMBL_Biomart150319sorted.txt')
+#h.run()
+
+''' Test Trim function ===================================================== '''
+inDr = '/data/ChIPSeqAnalysis/Experiments/e/data/'
+targetFN = ['SRR6730206_shrt_RndSamp.fastq','SRR6730206_shrt_RndSamp2.fastq']
+outDr = '/data/ChIPSeqAnalysis/Experiments/e/results/'
+reportDr = '/data/ChIPSeqAnalysis/Experiments/e/reports/'
+logDr = '/data/ChIPSeqAnalysis/Experiments/e/logs/'
+
+
+k = qc.runTrimR(inDr = inDr, targetFN = targetFN, outDr = outDr, reportDr = reportDr, logDr = logDr,  nBsN = 1, phredthres = 30, phredN = 5)
+k.run()
