@@ -74,7 +74,7 @@ class runGeneFinderR:
             #print('\n')
 
             dockerInput = dockerArgs + [RMDStr, inputPth, pkCler , gnStr, outputPth]
-            #print(dockerInput)
+            print(dockerInput)
 
             p = subprocess.Popen(dockerInput, shell=False, stdout=subprocess.PIPE,
                  stderr=subprocess.PIPE)

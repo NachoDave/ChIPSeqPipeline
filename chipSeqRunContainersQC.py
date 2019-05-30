@@ -155,7 +155,7 @@ class runBedToolsRmBL:
         self.dt = dt
 
         if outFN is None:
-            outFN = [w.replace('.sorted.bam', 'BLstRm.sorted.bam') for w in targetFN]
+            outFN = [w.replace('.sorted.bam', 'BlkLstRm.sorted.bam') for w in targetFN]
         print(outFN)
         self.outFN = outFN
 
@@ -166,7 +166,7 @@ class runBedToolsRmBL:
 
 
     def run(self):
-        bedtoolsBLRmErr = open(self.logDr + 'bedtoolsBLRm' + self.dt + '.err', 'w+')
+        bedtoolsBLRmErr = open(self.logDr + '/bedtoolsBLRm' + self.dt + '.err', 'w+')
         for inFNDx, outFNDx in zip(self.targetFN, self.outFN):
 
             dockerArgs = ['docker', 'run', '--rm',
@@ -186,6 +186,7 @@ class runBedToolsRmBL:
             print(self.inDr, outFNDx)
             with open(self.inDr + outFNDx, 'w+b') as f:
                 f.write(output)
+            f.close()
 
             bedtoolsBLRmErr.write('Input file: ' + self.inDr + inFNDx)
             bedtoolsBLRmErr.write('\n')

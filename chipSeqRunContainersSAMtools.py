@@ -73,7 +73,7 @@ class runSamtools:
         samSortErr = open(self.logDr  + '/samSort' + self.dt + '.err', 'w+')
         samSortErr.write('Error log for samtools sort ' + self.dt)
 
-        if self.bamFiles is None: # check if bam file names provide, otherwise use the output file names
+        if self.bamFiles is None: # check if bam file names provided, otherwise use the output file names
             self.bamFiles = self.targetFNOut + self.ctrlFNOut
 
         for inNm in self.bamFiles:

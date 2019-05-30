@@ -27,7 +27,7 @@ class runMACS:
         self.outDr = outDr
 
         if outFN is None:
-            outFN = [w.replace('.bam', '_MACS') for w in targetFN]
+            outFN = [w.replace('.sorted.bam', '_MACS') for w in targetFN]
 
         self.outFN = outFN
         dt = str(datetime.datetime.now())
