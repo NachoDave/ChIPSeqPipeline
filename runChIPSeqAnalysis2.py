@@ -262,12 +262,12 @@ if 'preqc' in steps:
 if 'align' in steps:
     # Create results directory for alignments
     try:
-        os.mkdir(resDir + '/alignments')
-        print("Directory " , resDir + '/alignments' ,  " Created ")
+        os.mkdir(resDir + '/alignments/')
+        print("Directory " , resDir + '/alignments/' ,  " Created ")
     except:
-        print("Directory " , resDir + '/alignments' ,  " already exists")
+        print("Directory " , resDir + '/alignments/' ,  " already exists")
 
-    alignDir = resDir + '/alignments'
+    alignDir = resDir + '/alignments/'
     # Use Bowtie2 aligner
     if 'bowtie2' in inPars['Aligner']:
         print('Aligning using Bowtie2!')
