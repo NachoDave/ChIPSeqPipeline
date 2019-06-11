@@ -398,5 +398,5 @@ if 'genelist' in steps:
 
     geneDir = resDir + '/genes/'
     gnFnd = gf.runGeneFinderR(inDr = curDr, targetFN = curTarFN, geneLstNm = inPars["geneList"][0],
-    FDR = FDR, pval = PVALUE, dist = DIST, outDr = geneDir)
+    FDR = FDR, pval = PVALUE, dist = DIST, outDr = geneDir, logDr = logDir)
     gnFnd.run()

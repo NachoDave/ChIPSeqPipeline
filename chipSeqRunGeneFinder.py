@@ -54,11 +54,11 @@ class runGeneFinderR:
 
         print(dockerArgs)
 
-        rOutPut = open(self.logDr +  'Genefinder' + self.dt + '.log', 'w+')
+        rOutPut = open(self.logDr +  '/Genefinder' + self.dt + '.log', 'w+')
 
         for infndx, outfndx in zip(self.targetFN, self.outFN):
 
-            RMDStr = 'rmarkdown::render("/home/rstudio/scripts/' + self.scriptNM + '", output_file = "/home/rstudio/logDr' + outfndx + '.html")'
+            RMDStr = 'rmarkdown::render("/home/rstudio/scripts/' + self.scriptNM + '", output_file = "/home/rstudio/logDr/' + outfndx + '.html")'
             inputPth = '/home/rstudio/data/' + infndx
             pkCler = self.peakCaller
             gnStr = '/home/rstudio/genetable/' + self.geneLstNm
