@@ -15,7 +15,6 @@ class runMACS:
         self.inDr = inDr
         self.targetFN = targetFN
         self.args = args
-        self.ctrlFN = ctrlFN
 
         if logDr is None:
             logDr = inDr
@@ -29,6 +28,10 @@ class runMACS:
         if outFN is None:
             outFN = [w.replace('.sorted.bam', '_MACS') for w in targetFN]
 
+        if not ctrlFN:
+            ctrlFN = None
+
+        self.ctrlFN = ctrlFN
         self.outFN = outFN
         dt = str(datetime.datetime.now())
         dt = dt[0:10]

@@ -192,3 +192,31 @@ class runBedToolsRmBL:
             bedtoolsBLRmErr.write('\n')
             bedtoolsBLRmErr.write(err)
         bedtoolsBLRmErr.close()
+
+""" ======================================================================== """
+""" Class to use phantompeakqualtools container ============================ """
+
+class runPhantomPeak:
+
+    def __init__(self, inDr, targetFN, logDr = None, reportDr = None):
+        self.inDr = inDr
+        self.targetFN = targetFN
+
+        if logDr is None:
+            logDr = inDr
+
+        if reportDr is None:
+            reportDr = inDr
+
+        self.logDr = logDr
+        self.reportDr = reportDr
+
+        dt = str(datetime.datetime.now())
+        dt = dt[0:10]
+        dt = dt.replace('-', '')
+        self.dt = dt
+
+    def run(self):
+
+        pQCErr = open(self.logDr + '/runPhantomPeak' + self.dt + '.err', 'w+')
+        pQCErr.write('Error log for samtools Index ' + self.dt)

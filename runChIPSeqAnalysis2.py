@@ -312,32 +312,43 @@ if 'align' in steps:
         sys.exit()
 
 ''' Step 4 Conversion to BAM ====================================== '''
-
+''' Step 4b sam 2 bam conversion ========================================= '''
 if 'sam2bam' in steps:
     print('Converting sam files to bam files, sorting and indexing')
     #
     bamSrtIdx = samt.runSamtools(inDr = curDr, targetFN = curTarFN, ctrlFN = curCtrlFN, logDr = logDir) # note for pair ended change targetFN = curTarFN + curTarFN2
     bamSrtIdx.sam2Bam() # convert sam to bam file
+    curTarFN = [w.replace('.sam', '.bam') for w in curTarFN]
+    curCtrlFN = [w.replace('.sam', '.bam') for w in curCtrlFN]
+
+''' Step 4b Sort bam files ========================================= '''
+if 'sortBam' in steps:
+    bamSrtIdx = samt.runSamtools(inDr = curDr, targetFN = curTarFN, ctrlFN = curCtrlFN, logDr = logDir)
     bamSrtIdx.sortBam() # sort bam file
 
-    curTarFN = [w.replace('.sam', '.sorted.bam') for w in curTarFN]
-    curCtrlFN = [w.replace('.sam', '.sorted.bam') for w in curCtrlFN]
 
-    ''' Step 4a Remove DAC blacklisted regions from sorted bam files ======= '''
-    if 'removeblacklist' in steps: # Remove blacklisted regions
+    curTarFN = [w.replace('.bam', '.sorted.bam') for w in curTarFN]
+    curCtrlFN = [w.replace('.bam', '.sorted.bam') for w in curCtrlFN]
 
-        rmBl = qc.runBedToolsRmBL(inDr = curDr, targetFN = curTarFN + curCtrlFN, blkLstPth = blkLstDir, blkLstFN = blkLst,
+    ''' Step 4c Remove DAC blacklisted regions from sorted bam files ======= '''
+if 'removeblacklist' in steps: # Remove blacklisted regions
+
+    rmBl = qc.runBedToolsRmBL(inDr = curDr, targetFN = curTarFN + curCtrlFN, blkLstPth = blkLstDir, blkLstFN = blkLst,
         logDr = logDir) # make object to run the blacklist container
-        rmBl.run()
+    rmBl.run()
         # Update filenames
+    if 'sortBam' in steps:
         curTarFN = [w.replace('.sorted.bam', 'BlkLstRm.sorted.bam') for w in curTarFN]
         curCtrlFN = [w.replace('.sorted.bam', 'BlkLstRm.sorted.bam') for w in curCtrlFN]
-
-        bamSrtIdx2 = samt.runSamtools(inDr = curDr, targetFN = curTarFN, ctrlFN = curCtrlFN, logDr = logDir) # note for pair ended change targetFN = curTarFN + curTarFN2
-        bamSrtIdx2.indexBam()
     else:
+        curTarFN = [w.replace('.bam', 'BlkLstRm.bam') for w in curTarFN]
+        curCtrlFN = [w.replace('.bam', 'BlkLstRm.bam') for w in curCtrlFN]
 
-        bamSrtIdx.indexBam() # index bam file
+''' Step 4d Index bam files ========================================= '''
+if 'indexBam' in steps:
+    bamSrtIdx = samt.runSamtools(inDr = curDr, targetFN = curTarFN, ctrlFN = curCtrlFN, logDr = logDir) # note for pair ended change targetFN = curTarFN + curTarFN2
+    bamSrtIdx.indexBam()
+
 
     #curTarFN = []
     #curCtrlFN = oCtrlFN
