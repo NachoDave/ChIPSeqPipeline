@@ -50,49 +50,6 @@ inputParFn = expDir + '/inputParameters.txt' # input parameter path
 
 datDir = expDir + 'data'
 
-try:
-    os.path.exists(datDir) # check the results directory is there
-except:
-    print('Could not find the data directory. Please create a directory called data \
-    in your experiment directory and put your data files in it. Exiting')
-
-inputParFn = expDir + 'inputParameters.txt' # input parameter path
-print('Looking for ' + inputParFn +  '\n')
-datDir = expDir + 'data'
-
-try:
-    os.path.exists(datDir) # check the results directory is there
-except:
-    print('Could not find the data directory. Please create a directory called data \
-    in your experiment directory and put your data files in it. Exiting')
-
-try:
-    # Create target Directory
-    os.mkdir(expDir + 'results')
-    print("Directory " , expDir + 'results' ,  " Created ")
-except:
-    print("Directory " , expDir + 'results' ,  " already exists")
-
-try:
-    # Create target reports Directory
-    os.mkdir(expDir + 'reports')
-    print("Directory " , expDir + 'reports' ,  " Created ")
-except:
-    print("Directory reports" , expDir + 'reports' ,  " already exists")
-
-try:
-    # Create target logs Directory
-    os.mkdir(expDir + 'logs')
-    print("Directory " , expDir + 'logs' ,  " Created ")
-except:
-    print("Directory logs" , expDir + 'logs' ,  " already exists")
-
-
-resDir = expDir + 'results'
-repDir = expDir + 'reports'
-logDir = expDir + 'logs' # logs directory
-tarDir = expDir +'data' # this should be updated after each step is run to point to the directory containing latest Files
-
 ''' Read inputParameters.txt file ========================================== '''
 # load input parameters
 try:
@@ -107,6 +64,47 @@ except Exception as ex:
     print("Something wrong with the inputParameters.txt file formatting. (See below).")
     print(ex)
     sys.exit()
+
+if 'ExperimentName' in inPars:
+    dirSuffix = inPars['ExperimentName'][0]
+else:
+    dirSuffix = ''
+
+resDir = expDir + 'results' + dirSuffix
+repDir = expDir + 'reports' + dirSuffix
+logDir = expDir + 'logs' + dirSuffix# logs directory
+tarDir = expDir +'data' # this should be updated after each step is run to point to the directory containing latest Files
+
+''' Check for directories and create if needed '''
+
+try:
+    os.path.exists(datDir) # check the results directory is there
+except:
+    print('Could not find the data directory. Please create a directory called data \
+    in your experiment directory and put your data files in it. Exiting')
+    sys.exit()
+
+try:
+    # Create target Directory
+    os.mkdir(resDir)
+    print("Directory " , resDir ,  " Created ")
+except:
+    print("Directory " , expDir + 'results' ,  " already exists")
+
+try:
+    # Create target reports Directory
+    os.mkdir(repDir)
+    print("Directory " , repDir ,  " Created ")
+except:
+    print("Directory reports" , expDir + 'reports' ,  " already exists")
+
+try:
+    # Create target logs Directory
+    os.mkdir(logDir)
+    print("Directory " , logDir ,  " Created ")
+except:
+    print("Directory logs" , expDir + 'logs' ,  " already exists")
+
 
 
 ''' Check essential parameters are present '''
@@ -254,7 +252,7 @@ if 'trim' in steps:
 ''' Step 2 Fastqc report =================================================== '''
 
 if 'preqc' in steps:
-    e = qc.runFastQC(curDr, curTarFN + curCtrlFN, logDr = logDir)
+    e = qc.runFastQC(curDr, curTarFN + curCtrlFN, logDr = repDir)
     e.run()
 
 ''' Step 3 Alignment ======================================================== '''
