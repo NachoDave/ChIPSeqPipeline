@@ -70,10 +70,12 @@ if 'ExperimentName' in inPars:
 else:
     dirSuffix = ''
 
-resDir = expDir + 'results' + dirSuffix
-repDir = expDir + 'reports' + dirSuffix
-logDir = expDir + 'logs' + dirSuffix# logs directory
-tarDir = expDir +'data' # this should be updated after each step is run to point to the directory containing latest Files
+resDir = expDir + 'results' + dirSuffix + '/'
+repDir = expDir + 'reports' + dirSuffix + '/'
+logDir = expDir + 'logs' + dirSuffix + '/'# logs directory
+tarDir = expDir +'data' + '/'# this should be updated after each step is run to point to the directory containing latest Files
+
+
 
 ''' Check for directories and create if needed '''
 
@@ -105,7 +107,7 @@ try:
 except:
     print("Directory logs" , expDir + 'logs' ,  " already exists")
 
-
+logFile = open(logDir + dirSuffix + 'ChIPAnalysis' + dt + '.log', 'w+') # open log file for writing
 
 ''' Check essential parameters are present '''
 # targetFileNames
@@ -409,3 +411,6 @@ if 'genelist' in steps:
     gnFnd = gf.runGeneFinderR(inDr = curDr, targetFN = curTarFN, geneLstNm = inPars["geneList"][0],
     FDR = FDR, pval = PVALUE, dist = DIST, outDr = geneDir, logDr = logDir)
     gnFnd.run()
+
+
+logFile.close()
