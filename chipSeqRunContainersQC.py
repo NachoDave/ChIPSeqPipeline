@@ -152,13 +152,17 @@ class runTrimR:
 
 class runFastQC:
 
-    def __init__(self, inDr, targetFN, logDr = None):
+    def __init__(self, inDr, targetFN, logDr = None, repDr = None):
         self.inDr = inDr
         self.targetFN = targetFN
 
         if logDr is None:
             logDr = inDr
 
+        if repDr is None:
+            repDr = logDr
+
+        self.repDr = repDr
         self.logDr = logDr
 
         dt = str(datetime.datetime.now())
@@ -172,8 +176,9 @@ class runFastQC:
         fastQCErr.write('Error log for samtools Index ' + self.dt)
 
         dockerArgs= [
-        'docker', 'run', '-v', self.inDr + ':/data/', '--rm',
-         'biocontainers/fastqc:v0.11.5_cv3', 'fastqc'] + self.targetFN
+        'docker', 'run', '-v', self.inDr + ':/data/', '--rm', '-v', self.repDr + ':/rep/',
+         'biocontainers/fastqc:v0.11.5_cv3', 'fastqc' , '--outdir=/rep/'] + self.targetFN
+
 
 
         print(dockerArgs)

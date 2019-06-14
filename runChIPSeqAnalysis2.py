@@ -290,7 +290,7 @@ if 'trim' in steps:
 ''' Step 2 Fastqc report =================================================== '''
 
 if 'preqc' in steps:
-    e = qc.runFastQC(curDr, curTarFN + curCtrlFN, logDr = repDir)
+    e = qc.runFastQC(curDr, curTarFN + curCtrlFN + curTarFN2 + curCtrlFN2, logDr = logDir, repDr = repDir)
     e.run()
 
 ''' Step 3 Alignment ======================================================== '''
