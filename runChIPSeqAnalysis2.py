@@ -66,7 +66,7 @@ except Exception as ex:
     sys.exit()
 
 if 'ExperimentName' in inPars:
-    dirSuffix = inPars['ExperimentName'][0]
+    dirSuffix = '_' + inPars['ExperimentName'][0]
 else:
     dirSuffix = ''
 
@@ -107,7 +107,7 @@ try:
 except:
     print("Directory logs" , expDir + 'logs' ,  " already exists")
 
-logFile = open(logDir + dirSuffix + 'ChIPAnalysis' + dt + '.log', 'w+') # open log file for writing
+logFile = open(logDir + 'ChIPAnalysis' + dirSuffix +  dt + '.log', 'w+') # open log file for writing
 
 ''' Check essential parameters are present '''
 # targetFileNames
@@ -170,6 +170,22 @@ if 'Y' in inPars['PE']:
         print('Could not find TargetFileNames2 for pair ended reads')
         sys.exit()
 
+# Check for ControlFileNames2 in pairended
+if 'Y' in inPars['PE'] and 'ctrlFileNames' in inPars:
+    try:
+        inPars['ctrlFileNames2']
+        print('Found ctrlFileNames2 for pair ended reads')
+
+        try:
+            assert(len(inPars['ctrlFileNames']) == len(inPars['ctrlFileNames2']))
+            print('Length of ctrl files equal to length of pairs')
+        except:
+            print('Length of ctrl files not equal to length of pairs')
+            sys.exit()
+    except:
+        print('Could not find ctrlFileNames2 for pair ended reads')
+        sys.exit()
+
 # Check if removeblacklist in analysis AnalysisSteps
 if 'removeblacklist' in steps:
     try:
@@ -191,11 +207,18 @@ else:
 curTarFN = tarFN
 if 'TargetFileNames2' in inPars:
     curTarFN2 = tarFN2
+else:
+    curTarFN2 = inPars['ctrlFileNames']
 
 if 'ctrlFileNames' in inPars:
     curCtrlFN = inPars['ctrlFileNames']
 else:
     curCtrlFN = []
+
+if 'ctrlFileNames2' in inPars:
+    curCtrlFN2 = inPars['ctrlFileNames2']
+else:
+    curCtrlFN2 = []
 
 
 
@@ -237,14 +260,27 @@ if 'trim' in steps:
 
         trm = qc.runTrimR(curDr, curTarFN + curCtrlFN, outDr = resDir + '/trimmedReads/',
         outFN = oTarFN + oCtrlFN, logDr = logDir, reportDr = repDir, nBsN = rmN,
-        phredthres = phredCO, phredN = phredN)
+        phredthres = phredCO, phredN = phredN, PE = 'N')
 
-        trm.run()
+        trm.runSE()
 
 
     elif 'Y' in inPars['PE']:
-        print('Please write pair ended trim part!!')
-        sys.exit()
+        oTarFN = [w.replace('.fastq', '_trim.fastq') for w in curTarFN] # output target file names
+        oCtrlFN = [w.replace('.fastq', '_trim.fastq') for w in curCtrlFN] # output control file names
+        oTarFN2 = [w.replace('.fastq', '_trim.fastq') for w in curTarFN2] # output target file names
+        oCtrlFN2 = [w.replace('.fastq', '_trim.fastq') for w in curCtrlFN2] # output control file names
+
+        print('\n' , curTarFN , oTarFN , curCtrlFN , oCtrlFN)
+
+        trm = qc.runTrimR(curDr, curTarFN + curCtrlFN, curTarFN2 + curCtrlFN2, outDr = resDir + '/trimmedReads/',
+        outFN = oTarFN + oCtrlFN, logDr = logDir, reportDr = repDir, nBsN = rmN,
+        phredthres = phredCO, phredN = phredN, PE = 'Y')
+
+        trm.runPE()
+
+        curTarFN2 = oTarFN2
+        curCtrlFN2 = oCtrlFN2
 
     # Update current directory and files
     curDr = resDir + '/trimmedReads/'
@@ -355,8 +391,8 @@ if 'indexBam' in steps:
 
 ''' Step 5 Post alignment QC =============================================== '''
 if 'postqc' in steps:
-    pass
-    print('PostQc not written Dave!')
+    j = qc.runPhantomPeak(inDr = curDr, targetFN = curTarFN + curCtrlFN, repDr = repDir, logDr = logDir)
+    j.run()
 
 ''' Step 6 Peak calling ==================================================== '''
 if 'peakcall' in steps:

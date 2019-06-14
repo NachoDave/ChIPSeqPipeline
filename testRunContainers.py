@@ -94,5 +94,13 @@ reportDr = '/data/ChIPSeqAnalysis/Experiments/e/reports/'
 logDr = '/data/ChIPSeqAnalysis/Experiments/e/logs/'
 
 
-k = qc.runTrimR(inDr = inDr, targetFN = targetFN, outDr = outDr, reportDr = reportDr, logDr = logDr,  nBsN = 1, phredthres = 30, phredN = 5)
-k.run()
+#k = qc.runTrimR(inDr = inDr, targetFN = targetFN, outDr = outDr, reportDr = reportDr, logDr = logDr,  nBsN = 1, phredthres = 30, phredN = 5)
+#k.run()
+
+''' Test phantom peaks QC ================================================== '''
+inDr = '/data/ChIPSeqAnalysis/Experiments/WT1_300519/results/alignments/'
+targetFN = ['2_fertile_WT1_i6_filteredhg38_trim_bowtie2UPBlkLstRm.sorted.bam', '5_2093Swan_PCOS_AR_i78_filteredhg38_trim_bowtie2UPBlkLstRm.sorted.bam']
+repDr = '/data/ChIPSeqAnalysis/Experiments/WT1_300519/reports/'
+logDr= '/data/ChIPSeqAnalysis/Experiments/WT1_300519/logs/'
+j = qc.runPhantomPeak(inDr, targetFN, reportDr = repDr, logDr = logDr)
+j.run()
