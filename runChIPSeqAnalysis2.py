@@ -48,7 +48,7 @@ expDataDir = expDir + 'data/'
 print('Experimental directory:', expDir)
 inputParFn = expDir + '/inputParameters.txt' # input parameter path
 
-datDir = expDir + 'data'
+datDir = expDir + 'data/'
 
 ''' Read inputParameters.txt file ========================================== '''
 # load input parameters
@@ -208,7 +208,7 @@ curTarFN = tarFN
 if 'TargetFileNames2' in inPars:
     curTarFN2 = tarFN2
 else:
-    curTarFN2 = inPars['ctrlFileNames']
+    curTarFN2 = []
 
 if 'ctrlFileNames' in inPars:
     curCtrlFN = inPars['ctrlFileNames']
@@ -332,7 +332,7 @@ if 'align' in steps:
             curTarFN = oTarFN
             curCtrlFN = oCtrlFN
 
-        elif 'N' in inPars['PE']: # run pair ended version
+        elif 'Y' in inPars['PE']: # run pair ended version
             print('Write instructions for running pair ended bowtie2 container!')
             sys.exit()
         else:
@@ -391,7 +391,7 @@ if 'indexBam' in steps:
 
 ''' Step 5 Post alignment QC =============================================== '''
 if 'postqc' in steps:
-    j = qc.runPhantomPeak(inDr = curDr, targetFN = curTarFN + curCtrlFN, repDr = repDir, logDr = logDir)
+    j = qc.runPhantomPeak(inDr = curDr, targetFN = curTarFN + curCtrlFN, reportDr = repDir, logDr = logDir)
     j.run()
 
 ''' Step 6 Peak calling ==================================================== '''
