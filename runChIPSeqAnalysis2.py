@@ -333,8 +333,22 @@ if 'align' in steps:
             curCtrlFN = oCtrlFN
 
         elif 'Y' in inPars['PE']: # run pair ended version
-            print('Write instructions for running pair ended bowtie2 container!')
-            sys.exit()
+
+            oTarFN = [w.replace('.fastq', '_bowtie2UP.sam').replace('.gz', '') for w in curTarFN]
+            oCtrlFN = [w.replace('.fastq', '_bowtie2UP.sam').replace('.gz', '') for w in curCtrlFN]
+
+
+            bwt2Algn = algn.runBowtie2Paired(inDr = curDr, targetFN1 = curTarFN, targetFN2 = curTarFN2, ctrlFN1 = curCtrlFN,
+            ctrlFN2 = curCtrlFN2, outDr = alignDir, logDr = logDir, targetFNOut = oTarFN, ctrlFNOut = oCtrlFN, genomePth = genomeDir, genome = genome,
+            args = bwt2Args) # create object to run bowtie2 container
+
+            bwt2Algn.run() # run containers
+
+            # Update current directories and target FilesblkLst
+            curDr = alignDir
+            curTarFN = oTarFN
+            curCtrlFN = oCtrlFN
+
         else:
             print("Don't know whether to run bowtie2 single or pair ended. Exiting")
             sys.exit()
