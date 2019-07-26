@@ -79,7 +79,7 @@ class runBowtie2Unpaired:
                             '-v', self.outDr + ':/data/outputFiles',
                             'biocontainers/bowtie2:v2.2.9_cv2',
                             'bowtie2', '-q',
-                            '-x', self.genomePth + self.genome,
+                            '-x', '/data/genomes/' + self.genome,
                             '-U', '/data/inputFiles/' + fqFN,
                             '-S', '/data/outputFiles/' + fqFNOut
                     ]
@@ -188,7 +188,7 @@ class runBowtie2Paired:
                             '-v', self.outDr + ':/data/outputFiles',
                             'biocontainers/bowtie2:v2.2.9_cv2',
                             'bowtie2', '-q',
-                            '-x', self.genomePth + self.genome,
+                            '-x', '/data/genomes/' + self.genome,
                             '-1', '/data/inputFiles/' + fqFN,
                             '-2', '/data/inputFiles/' + fqFN2,
                             '-S', '/data/outputFiles/' + fqFNOut
