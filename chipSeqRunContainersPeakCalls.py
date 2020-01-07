@@ -106,7 +106,7 @@ class runMACS2:
         self.outDr = outDr
 
         if outFN is None:
-            outFN = [w.replace('.sorted.bam', '_MACS') for w in targetFN]
+            outFN = [w.replace('.sorted.bam', '_MACS2') for w in targetFN]
 
         if not ctrlFN:
             ctrlFN = None

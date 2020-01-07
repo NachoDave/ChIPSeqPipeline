@@ -30,7 +30,12 @@ dt = dt.replace('-', '')
 go = 1
 cnt = 0
 
-print('Files in ' + dataDir +  'are: ', os.listdir(dataDir))
+#print('Files in ' + dataDir +  'are: ', os.listdir(dataDir))
+allExpDr = [drNm for drNm in os.listdir(dataDir) if os.path.isdir(os.path.join(dataDir, drNm))]
+allExpDr.sort()
+for dx in allExpDr:
+    print(dx)
+
 
 while go:
     expNm = raw_input('What is the name of your experiment directory? ')
@@ -45,7 +50,7 @@ while go:
         print('Five attempts to find the directory, aborting run')
         sys.exit()
 expDataDir = expDir + 'data/'
-print('Experimental directory:', expDir)
+#print('Experimental directory:', expDir)
 inputParFn = expDir + '/inputParameters.txt' # input parameter path
 
 datDir = expDir + 'data/'
@@ -445,8 +450,8 @@ if 'peakcall' in steps:
         macs2PkCl.run()
 
         curDr = peakDir
-        #curTarFN
-
+        curTarFN = [w.replace('.sorted.bam', '_MACS2_peaks.xls') for w in curTarFN]
+        #print(curTarFN)
 ''' Step 7 Gene list ======================================================= '''
 
 if 'genelist' in steps:
