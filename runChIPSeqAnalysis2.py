@@ -418,6 +418,7 @@ if 'peakcall' in steps:
 
     peakDir = resDir + '/peakCalls/'
 
+    ''' Run MACS peakcaller ================================================ '''
     if "MACS" in inPars['PeakCaller']:
 
         if "macsArgs" in inPars:
@@ -431,6 +432,20 @@ if 'peakcall' in steps:
 
         curDr = peakDir
         curTarFN = [w.replace('.sorted.bam', '_MACS_peaks.xls') for w in curTarFN]
+
+    ''' RUn MACS2 PeakCaller ============================================== '''
+    if "MACS2" in inPars['PeakCaller']:
+        if "macs2Args" in inPars:
+            macs2Args = inPars["macs2Args"]
+        else:
+            macs2Args = []
+
+        macs2PkCl = pc.runMACS2(inDr = curDr, targetFN = curTarFN, args = macs2Args,
+        logDr = logDir, outDr = peakDir, ctrlFN = curCtrlFN)
+        macs2PkCl.run()
+
+        curDr = peakDir
+        #curTarFN
 
 ''' Step 7 Gene list ======================================================= '''
 
