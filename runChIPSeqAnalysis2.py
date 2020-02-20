@@ -226,6 +226,15 @@ else:
     curCtrlFN2 = []
 
 
+''' Copy inputParameters file to log file ================================== '''
+
+logFile.write("Contents of inputParameters.txt: \n")
+# reopen the input parameter.text
+with open(inputParFn) as f:
+    for line in f:
+        logFile.write(line)
+
+f.close()
 
 ''' Step 1 Filter low quality reads ======================================== '''
 
@@ -426,12 +435,12 @@ if 'peakcall' in steps:
     ''' Run MACS peakcaller ================================================ '''
     if "MACS" in inPars['PeakCaller']:
 
-        if "macsArgs" in inPars:
-            macsArgs = inPars["macsArgs"]
+        if "PeakCallerArgs" in inPars:
+            PeakCallerArgs = inPars["PeakCallerArgs"]
         else:
-            macsArgs = []
+            PeakCallerArgs = []
 
-        macsPkCl = pc.runMACS(inDr = curDr, targetFN = curTarFN, args = macsArgs,
+        macsPkCl = pc.runMACS(inDr = curDr, targetFN = curTarFN, args = PeakCallerArgs,
         logDr = logDir, outDr = peakDir, ctrlFN = curCtrlFN)
         macsPkCl.run()
 
@@ -440,12 +449,12 @@ if 'peakcall' in steps:
 
     ''' RUn MACS2 PeakCaller ============================================== '''
     if "MACS2" in inPars['PeakCaller']:
-        if "macs2Args" in inPars:
-            macs2Args = inPars["macs2Args"]
+        if "PeakCallerArgs" in inPars:
+            PeakCallerArgs = inPars["PeakCallerArgs"]
         else:
-            macs2Args = []
+            PeakCallerArgs = []
 
-        macs2PkCl = pc.runMACS2(inDr = curDr, targetFN = curTarFN, args = macs2Args,
+        macs2PkCl = pc.runMACS2(inDr = curDr, targetFN = curTarFN, args = PeakCallerArgs,
         logDr = logDir, outDr = peakDir, ctrlFN = curCtrlFN)
         macs2PkCl.run()
 
