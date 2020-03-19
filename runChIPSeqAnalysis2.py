@@ -203,6 +203,8 @@ if 'removeblacklist' in steps:
         print('removeblacklist specified in analysis steps, but no blacklist or blacklist directory specified, exiting')
         sys.exit()
 
+if 'remove' not in inPars:
+    inPars['remove'] = []
 
 
 ''' Initialize current directory and current files ------------------------- '''
@@ -297,10 +299,20 @@ if 'trim' in steps:
         curTarFN2 = oTarFN2
         curCtrlFN2 = oCtrlFN2
 
+
     # Update current directory and files
     curDr = resDir + '/trimmedReads/'
     curTarFN = oTarFN
     curCtrlFN = oCtrlFN
+
+    if 'trimReads' in inPars["remove"]:
+        trimReadsDr = curDr
+        trimReadFN = curTarFN + curTarFN2
+
+    if 'trimReadsX' in inPars["remove"]:
+        trimReadsXDr = curDr
+        trimReadXFN = [dx.replace('.fastq', 'X.fastq') for dx in curTarFN + curTarFN2]
+
 
 ''' Step 2 Fastqc report =================================================== '''
 
@@ -380,7 +392,12 @@ if 'align' in steps:
         print("Aligner " + inPars['Aligner'][0] + " not recognised, exiting")
         sys.exit()
 
+    # Remove trimmed files
+    if 'trimReads' in inPars["remove"]:
+        rmif.rmIntFiles(trimReadsDr, trimReadFN, '.fastq')
 
+    if 'trimReadsX' in inPars["remove"]:
+        rmif.rmIntFiles(trimReadsXDr, trimReadXFN, 'X.fastq')
 
 ''' Step 4 Conversion to BAM ====================================== '''
 ''' Step 4b sam 2 bam conversion ========================================= '''
