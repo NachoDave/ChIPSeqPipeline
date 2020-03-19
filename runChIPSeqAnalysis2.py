@@ -13,6 +13,7 @@ import chipSeqRunContainersSAMtools as samt
 import chipSeqRunContainersQC as qc
 import chipSeqRunContainersPeakCalls as pc
 import chipSeqRunGeneFinder as gf
+import removeInterFiles as rmif
 
 ''' System constants (these should be changed when moving the pipeline to another
  computer) =================================================================='''
@@ -367,6 +368,10 @@ if 'align' in steps:
             print("Don't know whether to run bowtie2 single or pair ended. Exiting")
             sys.exit()
 
+        if 'sam' in inPars['remove']:
+            samDr = curDr
+            samFn = curTarFN + curCtrlFN
+
     elif 'bwa' in inPars['Aligner']:
         print("You haven't written a bwa docker class yet!")
         sys.exit()
@@ -374,6 +379,8 @@ if 'align' in steps:
     else:
         print("Aligner " + inPars['Aligner'][0] + " not recognised, exiting")
         sys.exit()
+
+
 
 ''' Step 4 Conversion to BAM ====================================== '''
 ''' Step 4b sam 2 bam conversion ========================================= '''
@@ -385,16 +392,28 @@ if 'sam2bam' in steps:
     curTarFN = [w.replace('.sam', '.bam') for w in curTarFN]
     curCtrlFN = [w.replace('.sam', '.bam') for w in curCtrlFN]
 
+    # Remove the sam files
+    if 'sam' in inPars['remove']:
+        rmif.rmIntFiles(samDr, samFn, '.sam')
+
 ''' Step 4b Sort bam files ========================================= '''
 if 'sortBam' in steps:
     bamSrtIdx = samt.runSamtools(inDr = curDr, targetFN = curTarFN, ctrlFN = curCtrlFN, logDr = logDir)
     bamSrtIdx.sortBam() # sort bam file
 
+    # Store the file names of the Bam files to remove later
+    if 'bam' in inPars['remove']:
+        bamDr = curDr
+        bamFn = curTarFN + curCtrlFN
 
     curTarFN = [w.replace('.bam', '.sorted.bam') for w in curTarFN]
     curCtrlFN = [w.replace('.bam', '.sorted.bam') for w in curCtrlFN]
 
-    ''' Step 4c Remove DAC blacklisted regions from sorted bam files ======= '''
+    # remove the bam files
+    if 'bam' in inPars['remove']:
+        rmif.rmIntFiles(bamDr, bamFn, '.bam')
+
+''' Step 4c Remove DAC blacklisted regions from sorted bam files ======= '''
 if 'removeblacklist' in steps: # Remove blacklisted regions
 
     rmBl = qc.runBedToolsRmBL(inDr = curDr, targetFN = curTarFN + curCtrlFN, blkLstPth = blkLstDir, blkLstFN = blkLst,
