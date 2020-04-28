@@ -275,8 +275,8 @@ if 'trim' in steps:
 
         print('\n' , curTarFN , oTarFN , curCtrlFN , oCtrlFN)
 
-        trm = qc.runTrimR(curDr, curTarFN + curCtrlFN, outDr = resDir + '/trimmedReads/',
-        outFN = oTarFN + oCtrlFN, logDr = logDir, reportDr = repDir, nBsN = rmN,
+        trm = qc.runTrimR(curDr, curTarFN + list(set(curCtrlFN)), outDr = resDir + '/trimmedReads/',
+        outFN = oTarFN + list(set(oCtrlFN)), logDr = logDir, reportDr = repDir, nBsN = rmN,
         phredthres = phredCO, phredN = phredN, PE = 'N')
 
         trm.runSE()
@@ -290,8 +290,8 @@ if 'trim' in steps:
 
         print('\n' , curTarFN , oTarFN , curCtrlFN , oCtrlFN)
 
-        trm = qc.runTrimR(curDr, curTarFN + curCtrlFN, curTarFN2 + curCtrlFN2, outDr = resDir + '/trimmedReads/',
-        outFN = oTarFN + oCtrlFN, logDr = logDir, reportDr = repDir, nBsN = rmN,
+        trm = qc.runTrimR(curDr, curTarFN + list(set(curCtrlFN)), curTarFN2 + list(set(curCtrlFN2)), outDr = resDir + '/trimmedReads/',
+        outFN = oTarFN + list(set(oCtrlFN)), logDr = logDir, reportDr = repDir, nBsN = rmN,
         phredthres = phredCO, phredN = phredN, PE = 'Y')
 
         trm.runPE()
