@@ -317,7 +317,7 @@ if 'trim' in steps:
 ''' Step 2 Fastqc report =================================================== '''
 
 if 'preqc' in steps:
-    e = qc.runFastQC(curDr, curTarFN + curCtrlFN + curTarFN2 + curCtrlFN2, logDr = logDir, repDr = repDir)
+    e = qc.runFastQC(curDr, curTarFN + list(set(curCtrlFN)) + curTarFN2 + list(set(curCtrlFN2)), logDr = logDir, repDr = repDir)
     e.run()
 
 ''' Step 3 Alignment ======================================================== '''
@@ -347,9 +347,10 @@ if 'align' in steps:
             oTarFN = [w.replace('.fastq', '_bowtie2UP.sam').replace('.gz', '') for w in curTarFN]
             oCtrlFN = [w.replace('.fastq', '_bowtie2UP.sam').replace('.gz', '') for w in curCtrlFN]
 
-
-            bwt2Algn = algn.runBowtie2Unpaired(inDr = curDr, targetFN = curTarFN, ctrlFN = curCtrlFN, outDr = alignDir,
-            logDr = logDir, targetFNOut = oTarFN, ctrlFNOut = oCtrlFN, genomePth = genomeDir, genome = genome,
+            print(curCtrlFN)
+            print(list(set(curCtrlFN)))
+            bwt2Algn = algn.runBowtie2Unpaired(inDr = curDr, targetFN = curTarFN, ctrlFN = list(set(curCtrlFN)), outDr = alignDir,
+            logDr = logDir, targetFNOut = oTarFN, ctrlFNOut = list(set(oCtrlFN)), genomePth = genomeDir, genome = genome,
             args = bwt2Args) # create object to run bowtie2 container
 
             bwt2Algn.run() # run containers
@@ -365,8 +366,8 @@ if 'align' in steps:
             oCtrlFN = [w.replace('.fastq', '_bowtie2UP.sam').replace('.gz', '') for w in curCtrlFN]
 
 
-            bwt2Algn = algn.runBowtie2Paired(inDr = curDr, targetFN1 = curTarFN, targetFN2 = curTarFN2, ctrlFN1 = curCtrlFN,
-            ctrlFN2 = curCtrlFN2, outDr = alignDir, logDr = logDir, targetFNOut = oTarFN, ctrlFNOut = oCtrlFN, genomePth = genomeDir, genome = genome,
+            bwt2Algn = algn.runBowtie2Paired(inDr = curDr, targetFN1 = curTarFN, targetFN2 = curTarFN2, ctrlFN1 = list(set(curCtrlFN)),
+            ctrlFN2 = list(set(curCtrlFN2)), outDr = alignDir, logDr = logDir, targetFNOut = oTarFN, ctrlFNOut = list(set(oCtrlFN)), genomePth = genomeDir, genome = genome,
             args = bwt2Args) # create object to run bowtie2 container
 
             bwt2Algn.run() # run containers
@@ -406,25 +407,25 @@ if 'align' in steps:
 if 'sam2bam' in steps:
     print('Converting sam files to bam files, sorting and indexing')
     #
-    bamSrtIdx = samt.runSamtools(inDr = curDr, targetFN = curTarFN, ctrlFN = curCtrlFN, logDr = logDir) # note for pair ended change targetFN = curTarFN + curTarFN2
+    bamSrtIdx = samt.runSamtools(inDr = curDr, targetFN = curTarFN, ctrlFN = list(set(curCtrlFN)), logDr = logDir) # note for pair ended change targetFN = curTarFN + curTarFN2
     bamSrtIdx.sam2Bam() # convert sam to bam file
     curTarFN = [w.replace('.sam', '.bam') for w in curTarFN]
     curCtrlFN = [w.replace('.sam', '.bam') for w in curCtrlFN]
 
     # Remove the sam files
     if 'sam' in inPars['remove']:
-        rmif.rmIntFiles(samDr, samFn, '.sam')
+        rmif.rmIntFiles(samDr, list(set(samFn)), '.sam')
 
 ''' Step 4b Sort bam files ========================================= '''
 if 'sortBam' in steps:
-    bamSrtIdx = samt.runSamtools(inDr = curDr, targetFN = curTarFN, ctrlFN = curCtrlFN, logDr = logDir)
+    bamSrtIdx = samt.runSamtools(inDr = curDr, targetFN = curTarFN, ctrlFN = list(set(curCtrlFN)), logDr = logDir)
     bamSrtIdx.sortBam() # sort bam file
 
     # Store the file names of the Bam files to remove later
     if 'bam' in inPars['remove']:
 
         bamDr = curDr
-        bamFn = curTarFN + curCtrlFN
+        bamFn = curTarFN + list(set(curCtrlFN))
         print("Deleting bam file")
 
     curTarFN = [w.replace('.bam', '.sorted.bam') for w in curTarFN]
@@ -437,7 +438,7 @@ if 'sortBam' in steps:
 ''' Step 4c Remove DAC blacklisted regions from sorted bam files ======= '''
 if 'removeblacklist' in steps: # Remove blacklisted regions
 
-    rmBl = qc.runBedToolsRmBL(inDr = curDr, targetFN = curTarFN + curCtrlFN, blkLstPth = blkLstDir, blkLstFN = blkLst,
+    rmBl = qc.runBedToolsRmBL(inDr = curDr, targetFN = curTarFN + list(set(curCtrlFN)), blkLstPth = blkLstDir, blkLstFN = blkLst,
         logDr = logDir) # make object to run the blacklist container
     rmBl.run()
         # Update filenames
@@ -450,7 +451,7 @@ if 'removeblacklist' in steps: # Remove blacklisted regions
 
 ''' Step 4d Index bam files ========================================= '''
 if 'indexBam' in steps:
-    bamSrtIdx = samt.runSamtools(inDr = curDr, targetFN = curTarFN, ctrlFN = curCtrlFN, logDr = logDir) # note for pair ended change targetFN = curTarFN + curTarFN2
+    bamSrtIdx = samt.runSamtools(inDr = curDr, targetFN = curTarFN, ctrlFN = list(set(curCtrlFN)), logDr = logDir) # note for pair ended change targetFN = curTarFN + curTarFN2
     bamSrtIdx.indexBam()
 
 
@@ -459,7 +460,7 @@ if 'indexBam' in steps:
 
 ''' Step 5 Post alignment QC =============================================== '''
 if 'postqc' in steps:
-    j = qc.runPhantomPeak(inDr = curDr, targetFN = curTarFN + curCtrlFN, reportDr = repDir, logDr = logDir)
+    j = qc.runPhantomPeak(inDr = curDr, targetFN = curTarFN + list(set(curCtrlFN)), reportDr = repDir, logDr = logDir)
     j.run()
 
 ''' Step 6 Peak calling ==================================================== '''
