@@ -437,17 +437,27 @@ if 'sortBam' in steps:
 
 ''' Step 4c Remove DAC blacklisted regions from sorted bam files ======= '''
 if 'removeblacklist' in steps: # Remove blacklisted regions
+    if 'sortedbam' in inPars['remove']:
+
+        bamSrtDr = curDr
+        bamSrtFn = curTarFN + list(set(curCtrlFN))
+
 
     rmBl = qc.runBedToolsRmBL(inDr = curDr, targetFN = curTarFN + list(set(curCtrlFN)), blkLstPth = blkLstDir, blkLstFN = blkLst,
         logDr = logDir) # make object to run the blacklist container
     rmBl.run()
         # Update filenames
     if 'sortBam' in steps:
+
         curTarFN = [w.replace('.sorted.bam', 'BlkLstRm.sorted.bam') for w in curTarFN]
         curCtrlFN = [w.replace('.sorted.bam', 'BlkLstRm.sorted.bam') for w in curCtrlFN]
     else:
         curTarFN = [w.replace('.bam', 'BlkLstRm.bam') for w in curTarFN]
         curCtrlFN = [w.replace('.bam', 'BlkLstRm.bam') for w in curCtrlFN]
+
+    if 'sortedbam' in inPars['remove']:
+        print("Deleting bam file" + str(bamSrtFn[0]))
+        rmif.rmIntFiles(bamSrtDr, bamSrtFn, '.bam')
 
 ''' Step 4d Index bam files ========================================= '''
 if 'indexBam' in steps:
