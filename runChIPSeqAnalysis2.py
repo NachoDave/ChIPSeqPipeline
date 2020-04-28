@@ -394,10 +394,12 @@ if 'align' in steps:
 
     # Remove trimmed files
     if 'trimReads' in inPars["remove"]:
-        rmif.rmIntFiles(trimReadsDr, trimReadFN, '.fastq')
+        if "trimReadFN" in locals():
+            rmif.rmIntFiles(trimReadsDr, trimReadFN, '.fastq')
 
     if 'trimReadsX' in inPars["remove"]:
-        rmif.rmIntFiles(trimReadsXDr, trimReadXFN, 'X.fastq')
+        if "trimReadFN" in locals():
+            rmif.rmIntFiles(trimReadsXDr, trimReadXFN, 'X.fastq')
 
 ''' Step 4 Conversion to BAM ====================================== '''
 ''' Step 4b sam 2 bam conversion ========================================= '''
@@ -420,14 +422,16 @@ if 'sortBam' in steps:
 
     # Store the file names of the Bam files to remove later
     if 'bam' in inPars['remove']:
+
         bamDr = curDr
         bamFn = curTarFN + curCtrlFN
+        print("Deleting bam file")
 
     curTarFN = [w.replace('.bam', '.sorted.bam') for w in curTarFN]
     curCtrlFN = [w.replace('.bam', '.sorted.bam') for w in curCtrlFN]
-
     # remove the bam files
     if 'bam' in inPars['remove']:
+        print("Deleting bam file" + str(bamFn[0]))
         rmif.rmIntFiles(bamDr, bamFn, '.bam')
 
 ''' Step 4c Remove DAC blacklisted regions from sorted bam files ======= '''
