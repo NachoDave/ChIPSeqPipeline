@@ -327,6 +327,8 @@ if 'align' in steps:
     try:
         os.mkdir(resDir + '/alignments/')
         print("Directory " , resDir + '/alignments/' ,  " Created ")
+        subprocess.call(["chgrp", "data", resDir + '/alignments/']) # in the bowtie2 container you are logged in as user pid 1.
+        #Change the group of the directory to allow all users to write to it
     except:
         print("Directory " , resDir + '/alignments/' ,  " already exists")
 
