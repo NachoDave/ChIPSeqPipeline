@@ -14,6 +14,7 @@ import chipSeqRunContainersQC as qc
 import chipSeqRunContainersPeakCalls as pc
 import chipSeqRunGeneFinder as gf
 import removeInterFiles as rmif
+import chipSeqDeepTools as dpTls
 
 ''' System constants (these should be changed when moving the pipeline to another
  computer) =================================================================='''
@@ -469,6 +470,23 @@ if 'indexBam' in steps:
 
     #curTarFN = []
     #curCtrlFN = oCtrlFN
+
+''' Step 4e Make big wig ============================================ '''
+if 'bigWig' in steps:
+    print('Makign BigWigs!')
+    try:
+        os.mkdir(resDir + '/bigWigs/')
+        print("Directory " , resDir + '/bigWigs/' ,  " Created ")
+        subprocess.call(["chgrp", "data", resDir + '/bigWigs/']) # in the bowtie2 container you are logged in as user pid 1.
+        #Change the group of the directory to allow all users to write to it
+    except:
+        print("Directory " , resDir + '/bigWigs/' ,  " already exists or can't be created")
+
+    bwig = dpTls.makeBigWig(inDr = curDr, targetFN = curTarFN, outDr = resDir + '/bigWigs/', outFN = [w.replace('.bam', '.bw') for w in curTarFN], logDr = logDir)
+    bwig.runBamCoverage()
+
+
+
 
 ''' Step 5 Post alignment QC =============================================== '''
 if 'postqc' in steps:

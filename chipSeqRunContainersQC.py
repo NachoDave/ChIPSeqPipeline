@@ -66,7 +66,7 @@ class runTrimR:
         '-v', self.outDr + ':/home/rstudio/results/',
         '-v', self.reportDr + ':/home/rstudio/reports/',
         '-v', self.scriptDr + ':/home/rstudio/scripts/',
-        'rstudiosyspipe_dj',
+        'nachodave/rstudiosyspipe_dj',
         'Rscript', '-e'
         ] # docker arguments for all files
 
@@ -111,7 +111,7 @@ class runTrimR:
         '-v', self.outDr + ':/home/rstudio/results/',
         '-v', self.reportDr + ':/home/rstudio/reports/',
         '-v', self.scriptDr + ':/home/rstudio/scripts/',
-        'rstudiosyspipe_dj',
+        'nachodave/rstudiosyspipe_dj',
         'Rscript', '-e'
         ] # docker arguments for all files
 
