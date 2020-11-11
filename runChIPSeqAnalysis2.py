@@ -482,7 +482,12 @@ if 'bigWig' in steps:
     except:
         print("Directory " , resDir + '/bigWigs/' ,  " already exists or can't be created")
 
-    bwig = dpTls.makeBigWig(inDr = curDr, targetFN = curTarFN, outDr = resDir + '/bigWigs/', outFN = [w.replace('.bam', '.bw') for w in curTarFN], logDr = logDir)
+    if 'bigWigArgs' in inPars:
+        bwigArgs = inPars['bigWigArgs']
+    else:
+        bwigArgs  = []
+
+    bwig = dpTls.makeBigWig(inDr = curDr, targetFN = curTarFN, outDr = resDir + '/bigWigs/', outFN = [w.replace('.bam', '.bw') for w in curTarFN], logDr = logDir, args = bwigArgs)
     bwig.runBamCoverage()
 
 

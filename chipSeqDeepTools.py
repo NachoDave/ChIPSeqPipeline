@@ -10,13 +10,11 @@ import datetime
 
 class makeBigWig:
 
-    def __init__(self, inDr, targetFN, outDr, outFN, logDr, extend = 150, bs = 50, args = []):
+    def __init__(self, inDr, targetFN, outDr, outFN, logDr,  args = []):
         self.inDr = inDr
         self.targetFN = targetFN
         self.outDr = outDr
         self.outFN = outFN
-        self.extend = extend
-        self.bs = bs
         self.args = args
         self.logDr = logDr
 
@@ -32,10 +30,7 @@ class makeBigWig:
         'docker', 'run', '--rm',
         '-v', self.inDr + ':/dataIn/',
         '-v', self.outDr + ':/dataOut/',
-        'quay.io/biocontainers/deeptools:3.3.1--py_0', 'bamCoverage',
-        '-p', '10',
-        '-v', '--extendReads', str(self.extend),
-        '-bs', str(self.bs)
+        'quay.io/biocontainers/deeptools:3.3.1--py_0', 'bamCoverage'
         ] # docker arguments for all files
 
         #print(dockerArgs)
@@ -44,7 +39,7 @@ class makeBigWig:
         for ix, ox in zip(self.targetFN, self.outFN):
             bamCovErr.write("Sample: " + ix + "\n")
 
-            dockerInput = dockerArgs + ['--bam',  '/dataIn/' +  ix, '-o', '/dataOut/' + ox]
+            dockerInput = dockerArgs + ['--bam',  '/dataIn/' +  ix, '-o', '/dataOut/' + ox] + self.args
 
             print(dockerInput)
 
